@@ -21,6 +21,33 @@ def test_simple():
     np.testing.assert_allclose(func(q), 1000 * x)
 
 
+def test_astropy_quantity():
+    x = jnp.array([1.0, 5.4, 0.1, -2.3])
+    q = x * units.km
+
+    @jax.jit
+    def func(arg):
+        return arg.to(units.m)
+
+    np.testing.assert_allclose(func(q).value, 1000 * x)
+
+
+def test_init():
+    x = jnp.array([1.0, 5.4, 0.1, -2.3])
+
+    q = Quantity(x * units.m)
+    assert q.unit is units.m
+    np.testing.assert_allclose(q.value, x)
+
+    q = Quantity(Quantity(x, units.m))
+    assert q.unit is units.m
+    np.testing.assert_allclose(q.value, x)
+
+    q = Quantity(Quantity(x, units.m), units.cm)
+    assert q.unit is units.cm
+    np.testing.assert_allclose(q.value, x * 1e2)
+
+
 @pytest.mark.parametrize(
     "a_,b_",
     [

@@ -5,7 +5,7 @@ from typing import Any, Callable, Iterable, Optional, Tuple
 
 import jax.numpy as jnp
 from astropy import units
-from jax.tree_util import register_pytree_node_class
+from jax.tree_util import register_pytree_node, register_pytree_node_class
 
 
 def _impl_additive_binary(
@@ -48,9 +48,22 @@ def _impl_multiplicative_binary(
 class Quantity:
     __array_priority__ = 10001
 
-    def __init__(self, value: Any, unit: Any):
-        self.value = jnp.asarray(value)
-        self.unit = units.Unit(unit)
+    def __init__(self, value: Any, unit: Any = None):
+        if hasattr(value, "unit"):
+            if unit is None:
+                self.value = jnp.asarray(value.value)
+                self.unit = units.Unit(value.unit)
+            else:
+                factor = units.Unit(value.unit).to(unit)
+                self.value = factor * jnp.asarray(value.value)
+                self.unit = units.Unit(unit)
+        else:
+            self.value = jnp.asarray(value)
+            self.unit = (
+                units.dimensionless_unscaled
+                if unit is None
+                else units.Unit(unit)
+            )
 
     def __repr__(self) -> str:
         return f"Quantity(value={self.value}, unit={self.unit})"
@@ -69,9 +82,7 @@ class Quantity:
     #     return factor * self.value
 
     def tree_flatten(self) -> Tuple[Tuple[Any], Any]:
-        children = (self.value,)
-        aux_data = self.unit
-        return (children, aux_data)
+        return (self.value,), self.unit
 
     @classmethod
     def tree_unflatten(cls, aux_data: Any, children: Tuple[Any]) -> "Quantity":
@@ -98,3 +109,14 @@ class Quantity:
     __rmatmul__ = _impl_multiplicative_binary(
         operator.matmul, unit_op=operator.mul, reflect=True
     )
+
+
+# The following is a total hack to handle conversions from the astropy
+# implementation of Quantity
+def flatten_astropy_quantity(q: units.Quantity) -> Tuple[Tuple[Any], Any]:
+    return (q.value,), q.unit
+
+
+register_pytree_node(
+    units.Quantity, flatten_astropy_quantity, Quantity.tree_unflatten
+)
