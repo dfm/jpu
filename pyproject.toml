@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=40.6.0,<60.9.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/jax_astropy_units/jax_astropy_units_version.py"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+skip_glob = []
+line_length = 79
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+
+[tool.coverage.run]
+parallel = true
+branch = true
+source = ["jax_astropy_units"]
+omit = ["docs/*", "tests/*", "*/jax_astropy_units/jax_astropy_units_version.py"]
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.pycln]
+all = true
+
+[tool.towncrier]
+name = "tinygp"
+package = "tinygp"
+package_dir = "src"
+filename = "docs/news.rst"
+directory = "news/"
+issue_format = "`#{issue} <https://github.com/dfm/jax_astropy_units/issues/{issue}>`_"
+underlines = "-~~"

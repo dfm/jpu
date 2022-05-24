@@ -1,0 +1,9 @@
+*_version.py
+.coverage
+.tox
+.coverage*
+/*.ipynb
+*.DAT
+docs/api/summary
+__pycache__
+*.egg-info
