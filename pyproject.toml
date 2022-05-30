@@ -3,7 +3,7 @@ requires = ["setuptools>=40.6.0,<60.9.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "src/jax_astropy_units/jax_astropy_units_version.py"
+write_to = "src/jpu/jpu_version.py"
 
 [tool.black]
 line-length = 79
@@ -19,8 +19,8 @@ use_parentheses = true
 [tool.coverage.run]
 parallel = true
 branch = true
-source = ["jax_astropy_units"]
-omit = ["docs/*", "tests/*", "*/jax_astropy_units/jax_astropy_units_version.py"]
+source = ["jpu"]
+omit = ["docs/*", "tests/*", "*/jpu/jpu_version.py"]
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -32,10 +32,10 @@ show_missing = true
 all = true
 
 [tool.towncrier]
-name = "tinygp"
-package = "tinygp"
+name = "jpu"
+package = "jpu"
 package_dir = "src"
 filename = "docs/news.rst"
 directory = "news/"
-issue_format = "`#{issue} <https://github.com/dfm/jax_astropy_units/issues/{issue}>`_"
+issue_format = "`#{issue} <https://github.com/dfm/jpu/issues/{issue}>`_"
 underlines = "-~~"

@@ -1,5 +1,4 @@
-**A [JAX](https://jax.readthedocs.io/en/latest/) + [AstroPy
-units](https://docs.astropy.org/en/stable/units/index.html) mashup.**
+# JAX + Units
 
 This is meant as a proof of concept to show how one might go about supporting
 units as JAX arguments. It's non-trivial at this point to implement numpy

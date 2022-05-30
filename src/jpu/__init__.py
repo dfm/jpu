@@ -3,9 +3,9 @@
 A JAX + AstroPy units mashup.
 """
 
-__all__ = ["Quantity"]
+# __all__ = ["Quantity"]
 
-from .quantity import Quantity
+# from .quantity import Quantity
 
 __author__ = "Dan Foreman-Mackey"
 __email__ = "foreman.mackey@gmail.com"

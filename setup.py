@@ -9,9 +9,9 @@ from setuptools import find_packages, setup
 
 # PROJECT SPECIFIC
 
-NAME = "jax_astropy_units"
+NAME = "jpu"
 PACKAGES = find_packages(where="src")
-META_PATH = os.path.join("src", "jax_astropy_units", "__init__.py")
+META_PATH = os.path.join("src", "jpu", "__init__.py")
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -21,7 +21,7 @@ CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
-INSTALL_REQUIRES = ["jax", "jaxlib", "astropy"]
+INSTALL_REQUIRES = ["jax", "jaxlib", "pint"]
 EXTRA_REQUIRE = {"test": ["pytest>=3.6"]}
 
 # END PROJECT SPECIFIC
