@@ -13,27 +13,21 @@ Here's an example for the kind of way that you might use this proof of concept:
 
 ```python
 import jax
-import jax.numpy as jnp
 import numpy as np
-import astropy.units as u
-import astropy.constants as c
-from jax_astropy_units import Quantity
+
+from jpu import UnitRegistry, numpy as jpunp
+
+u = UnitRegistry()
 
 @jax.jit
-def projectile_motion(v_init, theta, time, g=c.g0):
+def projectile_motion(v_init, theta, time, g=u.standard_gravity):
     """Compute the motion of a projectile with support for units"""
-
-    v_init = Quantity(v_init, unit=u.m / u.s).value
-    theta = Quantity(theta, unit=u.rad).value
-    time = Quantity(time, unit=u.s).value
-    g = Quantity(g, u.m / u.s**2).value
-
-    x = v_init * time * jnp.cos(theta)
-    y = v_init * time * jnp.sin(theta) - 0.5 * g * jnp.square(time)
-    return Quantity(x, u.m), Quantity(y, u.m)
+    x = v_init * time * jpunp.cos(theta)
+    y = v_init * time * jpunp.sin(theta) - 0.5 * g * jpunp.square(time)
+    return x.to(u.m), y.to(u.m)
 
 x, y = projectile_motion(
-    0.01 * u.km / u.h, 15 * u.deg, np.linspace(0, 10, 50) * u.min
+    5.0 * u.km / u.h, 60 * u.deg, np.linspace(0, 1, 50) * u.s
 )
 ```
 

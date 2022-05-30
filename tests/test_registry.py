@@ -28,7 +28,7 @@ def test_jittable():
         return q + 4.5 * u.km
 
     res = func(q)
-    assert res.u == u.m
+    assert res.units == u.m
     np.testing.assert_allclose(res.magnitude, x + 4500.0)
 
 
@@ -38,7 +38,7 @@ def test_ducktype():
     q = x * u.m
 
     res = q.sum()
-    assert res.u == u.m
+    assert res.units == u.m
     np.testing.assert_allclose(res.magnitude, x.sum())
 
     @jax.jit
@@ -46,5 +46,22 @@ def test_ducktype():
         return q.sum()
 
     res = func(q)
-    assert res.u == u.m
+    assert res.units == u.m
     np.testing.assert_allclose(res.magnitude, x.sum())
+
+
+def test_unary_ops():
+    u = UnitRegistry()
+
+    x = jnp.array([1.4, 2.0, -5.9])
+    q = x * u.m
+
+    for func in [
+        lambda q: q**2,
+        lambda q: q.sum(),
+        lambda q: 2 * q,
+    ]:
+        res = func(q)
+        np.testing.assert_allclose(res.magnitude, func(x))
+        res = jax.jit(func)(q)
+        np.testing.assert_allclose(res.magnitude, func(x))

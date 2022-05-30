@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-A JAX + AstroPy units mashup.
+JAX + Units
+===========
 """
 
-# __all__ = ["Quantity"]
+__all__ = ["numpy", "UnitRegistry"]
 
-# from .quantity import Quantity
+from . import numpy
+from .registry import UnitRegistry
+
+from .numpy_helper import implement_numpy_functions
+
+implement_numpy_functions()
+
 
 __author__ = "Dan Foreman-Mackey"
 __email__ = "foreman.mackey@gmail.com"
