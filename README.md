@@ -15,15 +15,15 @@ Here's an example for the kind of way that you might use this proof of concept:
 import jax
 import numpy as np
 
-from jpu import UnitRegistry, numpy as jpunp
+from jpu import UnitRegistry, numpy as jnpu
 
 u = UnitRegistry()
 
 @jax.jit
 def projectile_motion(v_init, theta, time, g=u.standard_gravity):
     """Compute the motion of a projectile with support for units"""
-    x = v_init * time * jpunp.cos(theta)
-    y = v_init * time * jpunp.sin(theta) - 0.5 * g * jpunp.square(time)
+    x = v_init * time * jnpu.cos(theta)
+    y = v_init * time * jnpu.sin(theta) - 0.5 * g * jnpu.square(time)
     return x.to(u.m), y.to(u.m)
 
 x, y = projectile_motion(
