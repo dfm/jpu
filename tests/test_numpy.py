@@ -84,6 +84,7 @@ def test_array_ops():
         ("dot", ["m", "s"]),
         ("median", ["m"]),
         ("cumprod", [""]),
+        ("any", ["kpc"]),
     ],
 )
 def test_unary(func, in_unit):

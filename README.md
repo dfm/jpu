@@ -1,7 +1,41 @@
 # JAX + Units
 
 **Built with [JAX](https://jax.readthedocs.io) and
-[Pint](https://pint.readthedocs.io).**
+[Pint](https://pint.readthedocs.io)!**
+
+This module provides and interface between [JAX](https://jax.readthedocs.io) and
+[Pint](https://pint.readthedocs.io) to allow JAX to support operations units.
+For example:
+
+```python
+>>> import jax
+>>> import jax.numpy as jnp
+>>> import jpu
+>>> u = jpu.UnitRegistry()
+>>>
+>>> @jax.jit
+... def add_two_lengths(a, b):
+...     return a + b
+...
+>>> add_two_lengths(3 * u.m, jnp.array([4.5, 1.2, 3.9]) * u.cm)
+<Quantity([3.045 3.012 3.039], 'meter')>
+
+```
+
+## Installation
+
+To install, use `pip`:
+
+```bash
+python -m pip install jpu
+```
+
+The only dependencies are `jax` and `pint`, and these will also be installed, if
+not already in your environment. Take a look at [the JAX docs for more
+information about installing JAX on different
+systems](https://github.com/google/jax#installation).
+
+## Usage
 
 This is meant as a proof of concept to show how one might go about supporting
 units as JAX arguments. It's non-trivial at this point to implement numpy

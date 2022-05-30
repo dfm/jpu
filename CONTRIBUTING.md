@@ -6,13 +6,13 @@ reports, feature requests, and pull requests.
 
 Here is a list of important resources for contributors:
 
-- [Source Code](https://github.com/dfm/tinygp)
-- [Documentation](https://tinygp.readthedocs.io)
-- [Issue Tracker](https://github.com/dfm/tinygp/issues)
+- [Source Code](https://github.com/dfm/jpu)
+- [Documentation](https://jpu.readthedocs.io)
+- [Issue Tracker](https://github.com/dfm/jpu/issues)
 
 ## How to report a bug
 
-Report bugs on the [Issue Tracker](https://github.com/dfm/tinygp/issues).
+Report bugs on the [Issue Tracker](https://github.com/dfm/jpu/issues).
 
 When filing an issue, make sure to answer these questions:
 
@@ -29,7 +29,7 @@ Example](https://stackoverflow.com/help/minimal-reproducible-example).
 ## How to request a feature
 
 Feel free to request features on the [Issue
-Tracker](https://github.com/dfm/tinygp/issues).
+Tracker](https://github.com/dfm/jpu/issues).
 
 ## How to test the project
 
@@ -40,7 +40,7 @@ python -m tox
 
 ## How to submit changes
 
-Open a [Pull Request](https://github.com/dfm/tinygp/pulls).
+Open a [Pull Request](https://github.com/dfm/jpu/pulls).
 
 We use the [towncrier](https://github.com/twisted/towncrier) package to manage
 release notes, so you should include a "news fragment" in the `/news` directory

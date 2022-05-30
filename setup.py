@@ -64,7 +64,7 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         packages=PACKAGES,
         package_dir={"": "src"},
-        package_data={"tinygp": ["py.typed"]},
+        package_data={"jpu": ["py.typed"]},
         include_package_data=True,
         python_requires=">=3.6",
         install_requires=INSTALL_REQUIRES,
