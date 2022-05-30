@@ -1,5 +1,8 @@
 # JAX + Units
 
+**Built with [JAX](https://jax.readthedocs.io) and
+[Pint](https://pint.readthedocs.io).**
+
 This is meant as a proof of concept to show how one might go about supporting
 units as JAX arguments. It's non-trivial at this point to implement numpy
 `ufunc`s for these custom types because of technical reasons (see
@@ -14,7 +17,6 @@ Here's an example for the kind of way that you might use this proof of concept:
 ```python
 import jax
 import numpy as np
-
 from jpu import UnitRegistry, numpy as jnpu
 
 u = UnitRegistry()

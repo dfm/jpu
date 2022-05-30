@@ -100,14 +100,6 @@ def stack(arrays, *args, **kwargs):
     return output_wrap(jnp.stack(arrays, *args, **kwargs))
 
 
-# def unwrap(p, discont=None, axis=-1):
-#     # np.unwrap only dispatches over p argument, so assume it is a Quantity
-#     discont = jnp.pi if discont is None else discont
-#     return p._REGISTRY.Quantity(
-#         jnp.unwrap(p.m_as("rad"), discont, axis=axis), "rad"
-#     ).to(p.units)
-
-
 def einsum(subscripts, *operands, **kwargs):
     if not any(_is_quantity(x) for x in operands):
         return jnp.einsum(subscripts, *operands, **kwargs)
@@ -118,72 +110,6 @@ def einsum(subscripts, *operands, **kwargs):
         "mul", _get_first_input_units(operands), operands
     )
     return jnp.einsum(subscripts, *operand_magnitudes, **kwargs) * output_unit
-
-
-# def isin(element, test_elements, assume_unique=False, invert=False):
-#     if not _is_quantity(element):
-#         raise ValueError(
-#             "Cannot test if unit-aware elements are in not-unit-aware array"
-#         )
-
-#     if _is_quantity(test_elements):
-#         try:
-#             test_elements = test_elements.m_as(element.units)
-#         except DimensionalityError:
-#             # Incompatible unit test elements cannot be in element
-#             return np.full(element.shape, False)
-#     elif _is_sequence_with_quantity_elements(test_elements):
-#         compatible_test_elements = []
-#         for test_element in test_elements:
-#             if not _is_quantity(test_element):
-#                 pass
-#             try:
-#                 compatible_test_elements.append(
-#                     test_element.m_as(element.units)
-#                 )
-#             except DimensionalityError:
-#                 # Incompatible unit test elements cannot be in element, but others in
-#                 # sequence may
-#                 pass
-#         test_elements = compatible_test_elements
-#     else:
-#         # Consider non-quantity like dimensionless quantity
-#         if not element.dimensionless:
-#             # Unit do not match, so all false
-#             return np.full(element.shape, False)
-#         else:
-#             # Convert to units of element
-#             element._REGISTRY.Quantity(test_elements).m_as(element.units)
-
-#     return np.isin(
-#         element.m, test_elements, assume_unique=assume_unique, invert=invert
-#     )
-
-
-# def pad(array, pad_width, mode="constant", **kwargs):
-#     def _recursive_convert(arg, unit):
-#         if iterable(arg):
-#             return tuple(_recursive_convert(a, unit=unit) for a in arg)
-#         elif not _is_quantity(arg):
-#             if arg == 0 or jnp.isnan(arg):
-#                 arg = unit._REGISTRY.Quantity(arg, unit)
-#             else:
-#                 arg = unit._REGISTRY.Quantity(arg, "dimensionless")
-
-#         return arg.m_as(unit)
-
-#     # pad only dispatches on array argument, so we know it is a Quantity
-#     units = array.units
-
-#     # Handle flexible constant_values and end_values, converting to units if Quantity
-#     # and ignoring if not
-#     for key in ("constant_values", "end_values"):
-#         if key in kwargs:
-#             kwargs[key] = _recursive_convert(kwargs[key], units)
-
-#     return units._REGISTRY.Quantity(
-#         np.pad(array._magnitude, pad_width, mode=mode, **kwargs), units
-#     )
 
 
 def any(a, *args, **kwargs):

@@ -2,6 +2,7 @@
 
 import sys
 from functools import wraps
+from inspect import signature
 from itertools import chain
 
 import jax.numpy as jnp
@@ -85,6 +86,46 @@ def _implement_func(func_name, input_units=None, output_unit=None):
     setattr(module, func_name, wrapped)
 
 
+def _implement_by_argname(func_name, unit_arguments, wrap_output=True):
+    jax_func = getattr(jnp, func_name)
+
+    @wraps(jax_func)
+    def wrapped(*args, **kwargs):
+        # Bind given arguments to the NumPy function signature
+        bound_args = signature(jax_func).bind(*args, **kwargs)
+
+        # Skip unit arguments that are supplied as None
+        valid_unit_arguments = [
+            label
+            for label in unit_arguments
+            if label in bound_args.arguments
+            and bound_args.arguments[label] is not None
+        ]
+
+        # Unwrap valid unit arguments, ensure consistency, and obtain output wrapper
+        (
+            unwrapped_unit_args,
+            output_wrap,
+        ) = numpy_func.unwrap_and_wrap_consistent_units(
+            *(bound_args.arguments[label] for label in valid_unit_arguments)
+        )
+
+        # Call NumPy function with updated arguments
+        for i, unwrapped_unit_arg in enumerate(unwrapped_unit_args):
+            bound_args.arguments[valid_unit_arguments[i]] = unwrapped_unit_arg
+        ret = jax_func(*bound_args.args, **bound_args.kwargs)
+
+        # Conditionally wrap output
+        if wrap_output:
+            return output_wrap(ret)
+        else:
+            return ret
+
+    module = sys.modules["jpu.numpy"]
+    module.__all__.append(func_name)
+    setattr(module, func_name, wrapped)
+
+
 def implement_numpy_functions():
     for func_name in numpy_func.strip_unit_input_output_ufuncs:
         _implement_func(func_name)
@@ -152,3 +193,51 @@ def implement_numpy_functions():
     }.items():
         for func_name in funcs:
             _implement_func(func_name, output_unit=unit_type)
+
+    for func_name, unit_arguments, wrap_output in [
+        ("expand_dims", "a", True),
+        ("squeeze", "a", True),
+        ("rollaxis", "a", True),
+        ("moveaxis", "a", True),
+        ("around", "a", True),
+        ("diagonal", "a", True),
+        ("mean", "a", True),
+        ("ptp", "a", True),
+        ("ravel", "a", True),
+        ("round_", "a", True),
+        ("sort", "a", True),
+        ("median", "a", True),
+        ("nanmedian", "a", True),
+        ("transpose", "a", True),
+        ("copy", "a", True),
+        ("average", "a", True),
+        ("nanmean", "a", True),
+        ("swapaxes", "a", True),
+        ("nanmin", "a", True),
+        ("nanmax", "a", True),
+        ("percentile", "a", True),
+        ("nanpercentile", "a", True),
+        ("quantile", "a", True),
+        ("nanquantile", "a", True),
+        ("flip", "m", True),
+        ("fix", "x", True),
+        ("trim_zeros", ["filt"], True),
+        ("broadcast_to", ["array"], True),
+        ("amax", ["a", "initial"], True),
+        ("amin", ["a", "initial"], True),
+        ("searchsorted", ["a", "v"], False),
+        ("isclose", ["a", "b"], False),
+        ("nan_to_num", ["x", "nan", "posinf", "neginf"], True),
+        ("clip", ["a", "a_min", "a_max"], True),
+        ("append", ["arr", "values"], True),
+        ("compress", "a", True),
+        ("linspace", ["start", "stop"], True),
+        ("tile", "A", True),
+        ("rot90", "m", True),
+        ("insert", ["arr", "values"], True),
+        ("resize", "a", True),
+        ("reshape", "a", True),
+        ("allclose", ["a", "b"], False),
+        ("intersect1d", ["ar1", "ar2"], True),
+    ]:
+        _implement_by_argname(func_name, unit_arguments, wrap_output)
