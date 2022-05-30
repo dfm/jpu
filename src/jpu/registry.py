@@ -4,7 +4,8 @@ from typing import Any, Tuple
 
 import jax
 from jax.tree_util import register_pytree_node
-from pint import compat, UnitRegistry as PintUnitRegistry
+from pint import UnitRegistry as PintUnitRegistry
+from pint import compat
 
 
 class UnitRegistry(PintUnitRegistry):

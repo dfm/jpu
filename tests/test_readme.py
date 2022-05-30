@@ -4,7 +4,9 @@
 def test_readme():
     import jax
     import numpy as np
-    from jpu import UnitRegistry, numpy as jnpu
+
+    from jpu import UnitRegistry
+    from jpu import numpy as jnpu
 
     u = UnitRegistry()
 

@@ -7,9 +7,8 @@ JAX + Units
 __all__ = ["numpy", "UnitRegistry"]
 
 from . import numpy
-from .registry import UnitRegistry
-
 from .numpy_helper import implement_numpy_functions
+from .registry import UnitRegistry
 
 implement_numpy_functions()
 

@@ -19,11 +19,11 @@ __all__ = [
 
 import jax.numpy as jnp
 from pint.numpy_func import (
-    unwrap_and_wrap_consistent_units,
+    _get_first_input_units,
     _is_quantity,
     convert_to_consistent_units,
     get_op_output_unit,
-    _get_first_input_units,
+    unwrap_and_wrap_consistent_units,
 )
 
 
