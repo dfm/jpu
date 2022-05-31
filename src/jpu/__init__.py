@@ -15,11 +15,9 @@ implement_numpy_functions()
 
 __author__ = "Dan Foreman-Mackey"
 __email__ = "foreman.mackey@gmail.com"
-__uri__ = "https://github.com/dfm/jax_astropy_units"
+__uri__ = "https://github.com/dfm/jpu"
 __license__ = "MIT"
-__description__ = "A JAX + AstroPy units mashup."
+__description__ = "JAX + Units"
 __copyright__ = "2022 Simons Foundation, Inc"
-__contributors__ = (
-    "https://github.com/dfm/jax_astropy_units/graphs/contributors"
-)
+__contributors__ = "https://github.com/dfm/jpu/graphs/contributors"
 __bibtex__ = __citation__ = """TBD"""

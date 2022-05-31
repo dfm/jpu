@@ -74,3 +74,6 @@ the `jax.numpy` interface. This is because JAX does not (yet?) provide a general
 interface for dispatching of ufuncs on custom array classes. I have played
 around with the undocumented `__jax_array__` interface, but it's not really
 flexible enough, and it isn't currently compatible with Pytree objects.
+
+So far, only a subset of the `numpy`/`jax.numpy` interface is implemented. Pull
+requests adding broader support (including submodules) would be welcome!
