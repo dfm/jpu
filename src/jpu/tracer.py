@@ -4,12 +4,12 @@ __all__ = ["units"]
 
 from functools import wraps
 from typing import Any, Dict
+
 import jax
 from jax._src.util import safe_map
 
 from . import numpy as jnu
 from .registry import UnitRegistry
-
 
 unit_transform_registry = {}
 unit_transform_registry[jax.lax.mul_p] = lambda a, b: a * b
@@ -53,12 +53,7 @@ def units_jaxpr(jaxpr, literals, *args, input_units):
         outvals = unit_transform_registry[eqn.primitive](*invals, **eqn.params)
         if not eqn.primitive.multiple_results:
             outvals = [outvals]
-        safe_map(
-            write,
-            eqn.outvars,
-            (v.magnitude for v in outvals),
-            (v.units for v in outvals),
-        )
+        safe_map(write, eqn.outvars, outvals)
     result = safe_map(read, jaxpr.outvars)
     if not eqn.primitive.multiple_results:
         return result[0]
