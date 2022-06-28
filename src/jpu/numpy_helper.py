@@ -174,7 +174,6 @@ def implement_numpy_functions():
         "argsort",
         "argmin",
         "argmax",
-        "alen",
         "ndim",
         "nanargmax",
         "nanargmin",
