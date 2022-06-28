@@ -21,19 +21,19 @@ import jax.numpy as jnp
 from pint.numpy_func import (
     _get_first_input_units,
     _is_quantity,
-    convert_to_consistent_units,
-    get_op_output_unit,
-    unwrap_and_wrap_consistent_units,
+    convert_to_consistent_units as _convert_to_consistent_units,
+    get_op_output_unit as _get_op_output_unit,
+    unwrap_and_wrap_consistent_units as _unwrap_and_wrap_consistent_units,
 )
 
 
 def modf(x, *args, **kwargs):
-    (x,), output_wrap = unwrap_and_wrap_consistent_units(x)
+    (x,), output_wrap = _unwrap_and_wrap_consistent_units(x)
     return tuple(output_wrap(y) for y in jnp.modf(x, *args, **kwargs))
 
 
 def frexp(x, *args, **kwargs):
-    (x,), output_wrap = unwrap_and_wrap_consistent_units(x)
+    (x,), output_wrap = _unwrap_and_wrap_consistent_units(x)
     mantissa, exponent = jnp.frexp(x, *args, **kwargs)
     return output_wrap(mantissa), exponent
 
@@ -46,12 +46,12 @@ def power(x1, x2):
 
 
 def add(x1, x2, *args, **kwargs):
-    (x1, x2), output_wrap = unwrap_and_wrap_consistent_units(x1, x2)
+    (x1, x2), output_wrap = _unwrap_and_wrap_consistent_units(x1, x2)
     return output_wrap(jnp.add(x1, x2, *args, **kwargs))
 
 
 def subtract(x1, x2, *args, **kwargs):
-    (x1, x2), output_wrap = unwrap_and_wrap_consistent_units(x1, x2)
+    (x1, x2), output_wrap = _unwrap_and_wrap_consistent_units(x1, x2)
     return output_wrap(jnp.subtract(x1, x2, *args, **kwargs))
 
 
@@ -76,7 +76,7 @@ def full_like(a, fill_value, **kwargs):
 
 def interp(x, xp, fp, left=None, right=None, period=None):
     # Need to handle x and y units separately
-    (x, xp, period), _ = unwrap_and_wrap_consistent_units(x, xp, period)
+    (x, xp, period), _ = _unwrap_and_wrap_consistent_units(x, xp, period)
     (fp, right, left), output_wrap = unwrap_and_wrap_consistent_units(
         fp, left, right
     )
@@ -86,27 +86,27 @@ def interp(x, xp, fp, left=None, right=None, period=None):
 
 
 def where(condition, *args):
-    args, output_wrap = unwrap_and_wrap_consistent_units(*args)
+    args, output_wrap = _unwrap_and_wrap_consistent_units(*args)
     return output_wrap(jnp.where(condition, *args))
 
 
 def concatenate(sequence, *args, **kwargs):
-    sequence, output_wrap = unwrap_and_wrap_consistent_units(*sequence)
+    sequence, output_wrap = _unwrap_and_wrap_consistent_units(*sequence)
     return output_wrap(jnp.concatenate(sequence, *args, **kwargs))
 
 
 def stack(arrays, *args, **kwargs):
-    arrays, output_wrap = unwrap_and_wrap_consistent_units(*arrays)
+    arrays, output_wrap = _unwrap_and_wrap_consistent_units(*arrays)
     return output_wrap(jnp.stack(arrays, *args, **kwargs))
 
 
 def einsum(subscripts, *operands, **kwargs):
     if not any(_is_quantity(x) for x in operands):
         return jnp.einsum(subscripts, *operands, **kwargs)
-    operand_magnitudes, _ = convert_to_consistent_units(
+    operand_magnitudes, _ = _convert_to_consistent_units(
         *operands, pre_calc_units=None
     )
-    output_unit = get_op_output_unit(
+    output_unit = _get_op_output_unit(
         "mul", _get_first_input_units(operands), operands
     )
     return jnp.einsum(subscripts, *operand_magnitudes, **kwargs) * output_unit

@@ -4,14 +4,15 @@ JAX + Units
 ===========
 """
 
-__all__ = ["numpy", "UnitRegistry"]
+__all__ = ["numpy", "monkey", "grad", "value_and_grad", "UnitRegistry"]
 
-from . import numpy
-from .numpy_helper import implement_numpy_functions
-from .registry import UnitRegistry
+from jpu import monkey, numpy
+from jpu.core import grad, value_and_grad
+from jpu.numpy_helper import implement_numpy_functions
+from jpu.registry import UnitRegistry
 
 implement_numpy_functions()
-
+del implement_numpy_functions
 
 __author__ = "Dan Foreman-Mackey"
 __email__ = "foreman.mackey@gmail.com"
