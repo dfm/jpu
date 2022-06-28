@@ -1,8 +1,10 @@
+# mypy: ignore-errors
+
 __all__ = ["grad", "value_and_grad"]
 
 import jax
-from jax.tree_util import tree_map
 from jax._src.util import wraps
+from jax.tree_util import tree_map
 from pint.numpy_func import _is_quantity
 
 

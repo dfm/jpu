@@ -18,11 +18,12 @@ __all__ = [
 ]
 
 import jax.numpy as jnp
+from pint.numpy_func import _get_first_input_units, _is_quantity
 from pint.numpy_func import (
-    _get_first_input_units,
-    _is_quantity,
     convert_to_consistent_units as _convert_to_consistent_units,
-    get_op_output_unit as _get_op_output_unit,
+)
+from pint.numpy_func import get_op_output_unit as _get_op_output_unit
+from pint.numpy_func import (
     unwrap_and_wrap_consistent_units as _unwrap_and_wrap_consistent_units,
 )
 
@@ -77,7 +78,7 @@ def full_like(a, fill_value, **kwargs):
 def interp(x, xp, fp, left=None, right=None, period=None):
     # Need to handle x and y units separately
     (x, xp, period), _ = _unwrap_and_wrap_consistent_units(x, xp, period)
-    (fp, right, left), output_wrap = unwrap_and_wrap_consistent_units(
+    (fp, right, left), output_wrap = _unwrap_and_wrap_consistent_units(
         fp, left, right
     )
     return output_wrap(

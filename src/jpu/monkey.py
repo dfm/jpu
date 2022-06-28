@@ -1,16 +1,21 @@
+# mypy: ignore-errors
+
 __all__ = ["patch"]
 
 import types
 from functools import singledispatch
 
-import pint
 import jax.numpy as jnp
 import numpy as np
+import pint
 
 import jpu.numpy as jpunp
 
 
 def patch():
+    """
+    Replace all the supported methods in jax.numpy with the unit-aware versions
+    """
     funcs = _get_module_functions(jpunp)
     for name, func in funcs.items():
         if name.startswith("_"):
