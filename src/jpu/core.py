@@ -1,11 +1,14 @@
 # mypy: ignore-errors
 
-__all__ = ["grad", "value_and_grad"]
+__all__ = ["is_quantity", "grad", "value_and_grad"]
 
 import jax
 from jax._src.util import wraps
 from jax.tree_util import tree_map
-from pint.numpy_func import _is_quantity
+
+
+def is_quantity(obj):
+    return hasattr(obj, "_units") and hasattr(obj, "_magnitude")
 
 
 def grad(
@@ -67,7 +70,7 @@ def value_and_grad(
             result, aux = fun(*args, **kwargs)
         else:
             result = fun(*args, **kwargs)
-        if _is_quantity(result):
+        if is_quantity(result):
             magnitude = result.magnitude
             units = result.units
         else:
@@ -96,9 +99,9 @@ def value_and_grad(
         if result_units is None:
             result = result_wo_units
             grad = tree_map(
-                lambda g: (g.magnitude / g.units if _is_quantity(g) else g),
+                lambda g: (g.magnitude / g.units if is_quantity(g) else g),
                 grad,
-                is_leaf=_is_quantity,
+                is_leaf=is_quantity,
             )
 
         else:
@@ -106,11 +109,11 @@ def value_and_grad(
             grad = tree_map(
                 lambda g: (
                     g.magnitude * result_units / g.units
-                    if _is_quantity(g)
+                    if is_quantity(g)
                     else g * result_units
                 ),
                 grad,
-                is_leaf=_is_quantity,
+                is_leaf=is_quantity,
             )
 
         if has_aux:
