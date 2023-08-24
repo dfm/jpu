@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 __all__ = ["is_quantity", "grad", "value_and_grad"]
 
 import jax

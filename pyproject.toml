@@ -1,41 +1,48 @@
-[build-system]
-requires = ["setuptools>=40.6.0,<60.9.0", "wheel", "setuptools_scm"]
-build-backend = "setuptools.build_meta"
+[project]
+name = "jpu"
+description = "JAX + Units"
+authors = [{ name = "Dan Foreman-Mackey", email = "foreman.mackey@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT License" }
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+]
+dynamic = ["version"]
+dependencies = ["jax", "jaxlib", "pint"]
 
-[tool.setuptools_scm]
-write_to = "src/jpu/jpu_version.py"
+[project.urls]
+"Homepage" = "https://github.com/dfm/jpu"
+"Source" = "https://github.com/dfm/jpu"
+"Bug Tracker" = "https://github.com/dfm/jpu/issues"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/jpu/version.py"
 
 [tool.black]
-line-length = 79
+target-version = ["py38", "py39"]
+line-length = 88
 
-[tool.isort]
-skip_glob = []
-line_length = 79
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+select = ["F", "I", "E", "W", "YTT", "B", "Q", "PLE", "PLR", "PLW", "UP"]
+ignore = ["PLR0912", "PLR0913"]
+exclude = []
 
-[tool.coverage.run]
-parallel = true
-branch = true
-source = ["jpu"]
-omit = ["docs/*", "tests/*", "*/jpu/jpu_version.py"]
-
-[tool.coverage.paths]
-source = ["src", "*/site-packages"]
-
-[tool.coverage.report]
-show_missing = true
-
-[tool.pycln]
-all = true
-
-[tool.towncrier]
-name = "jpu"
-package = "jpu"
-package_dir = "src"
-filename = "docs/news.rst"
-directory = "news/"
-issue_format = "`#{issue} <https://github.com/dfm/jpu/issues/{issue}>`_"
-underlines = "-~~"
+[tool.ruff.isort]
+known-first-party = ["jpu"]
+combine-as-imports = true

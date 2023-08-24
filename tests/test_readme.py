@@ -5,8 +5,7 @@ def test_readme():
     import jax
     import numpy as np
 
-    from jpu import UnitRegistry
-    from jpu import numpy as jnpu
+    from jpu import UnitRegistry, numpy as jnpu
 
     u = UnitRegistry()
 
@@ -17,8 +16,6 @@ def test_readme():
         y = v_init * time * jnpu.sin(theta) - 0.5 * g * jnpu.square(time)
         return x.to(u.m), y.to(u.m)
 
-    x, y = projectile_motion(
-        5.0 * u.km / u.h, 60 * u.deg, np.linspace(0, 1, 50) * u.s
-    )
+    x, y = projectile_motion(5.0 * u.km / u.h, 60 * u.deg, np.linspace(0, 1, 50) * u.s)
     assert x.units == u.m
     assert y.units == u.m

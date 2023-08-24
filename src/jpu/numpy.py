@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 __all__ = [
     "modf",
     "frexp",
@@ -18,12 +16,11 @@ __all__ = [
 ]
 
 import jax.numpy as jnp
-from pint.numpy_func import _get_first_input_units, _is_quantity
-from pint.numpy_func import (
+from pint.facets.numpy.numpy_func import (
+    _get_first_input_units,
+    _is_quantity,
     convert_to_consistent_units as _convert_to_consistent_units,
-)
-from pint.numpy_func import get_op_output_unit as _get_op_output_unit
-from pint.numpy_func import (
+    get_op_output_unit as _get_op_output_unit,
     unwrap_and_wrap_consistent_units as _unwrap_and_wrap_consistent_units,
 )
 
@@ -78,12 +75,8 @@ def full_like(a, fill_value, **kwargs):
 def interp(x, xp, fp, left=None, right=None, period=None):
     # Need to handle x and y units separately
     (x, xp, period), _ = _unwrap_and_wrap_consistent_units(x, xp, period)
-    (fp, right, left), output_wrap = _unwrap_and_wrap_consistent_units(
-        fp, left, right
-    )
-    return output_wrap(
-        jnp.interp(x, xp, fp, left=left, right=right, period=period)
-    )
+    (fp, right, left), output_wrap = _unwrap_and_wrap_consistent_units(fp, left, right)
+    return output_wrap(jnp.interp(x, xp, fp, left=left, right=right, period=period))
 
 
 def where(condition, *args):
@@ -104,12 +97,8 @@ def stack(arrays, *args, **kwargs):
 def einsum(subscripts, *operands, **kwargs):
     if not any(_is_quantity(x) for x in operands):
         return jnp.einsum(subscripts, *operands, **kwargs)
-    operand_magnitudes, _ = _convert_to_consistent_units(
-        *operands, pre_calc_units=None
-    )
-    output_unit = _get_op_output_unit(
-        "mul", _get_first_input_units(operands), operands
-    )
+    operand_magnitudes, _ = _convert_to_consistent_units(*operands, pre_calc_units=None)
+    output_unit = _get_op_output_unit("mul", _get_first_input_units(operands), operands)
     return jnp.einsum(subscripts, *operand_magnitudes, **kwargs) * output_unit
 
 
@@ -119,9 +108,7 @@ def any(a, *args, **kwargs):
     if a._is_multiplicative:
         return jnp.any(a._magnitude, *args, **kwargs)
     else:
-        raise ValueError(
-            "Boolean value of Quantity with offset unit is ambiguous."
-        )
+        raise ValueError("Boolean value of Quantity with offset unit is ambiguous.")
 
 
 def all(a, *args, **kwargs):
@@ -130,6 +117,4 @@ def all(a, *args, **kwargs):
     if a._is_multiplicative:
         return jnp.all(a._magnitude, *args, **kwargs)
     else:
-        raise ValueError(
-            "Boolean value of Quantity with offset unit is ambiguous."
-        )
+        raise ValueError("Boolean value of Quantity with offset unit is ambiguous.")

@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 __all__ = ["patch"]
 
 import types
@@ -33,8 +31,6 @@ def _get_module_functions(module):
         if key in ("__getattr__", "__dir__"):
             continue
         attr = getattr(module, key)
-        if isinstance(
-            attr, (types.BuiltinFunctionType, types.FunctionType, np.ufunc)
-        ):
+        if isinstance(attr, (types.BuiltinFunctionType, types.FunctionType, np.ufunc)):
             module_fns[key] = attr
     return module_fns

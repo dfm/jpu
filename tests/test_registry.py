@@ -12,7 +12,7 @@ def test_tree_flatten():
     x = jnp.array([1.4, 2.0, -5.9])
     q = x * u.m
 
-    val, _ = jax.tree_flatten(q)
+    val, _ = jax.tree_util.tree_flatten(q)
     assert len(val) == 1
     np.testing.assert_allclose(val[0], x)
 
@@ -43,9 +43,11 @@ def test_ducktype():
 
     @jax.jit
     def func(q):
+        print(q)
         return q.sum()
 
     res = func(q)
+    print(type(q), type(res))
     assert res.units == u.m
     np.testing.assert_allclose(res.magnitude, x.sum())
 

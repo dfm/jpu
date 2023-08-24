@@ -1,12 +1,10 @@
-# mypy: ignore-errors
-
 import sys
 from functools import wraps
 from inspect import signature
 from itertools import chain
 
 import jax.numpy as jnp
-from pint import numpy_func
+from pint.facets.numpy import numpy_func
 
 
 # Based closely on the pint implementation:
@@ -32,9 +30,7 @@ def _implement_func(func_name, input_units=None, output_unit=None):
         else:
             if isinstance(input_units, str):
                 # Conversion requires Unit, not str
-                pre_calc_units = first_input_units._REGISTRY.parse_units(
-                    input_units
-                )
+                pre_calc_units = first_input_units._REGISTRY.parse_units(input_units)
             else:
                 pre_calc_units = input_units
 
@@ -77,9 +73,7 @@ def _implement_func(func_name, input_units=None, output_unit=None):
         else:
             result_unit = output_unit
 
-        return first_input_units._REGISTRY.Quantity(
-            result_magnitude, result_unit
-        )
+        return first_input_units._REGISTRY.Quantity(result_magnitude, result_unit)
 
     module = sys.modules["jpu.numpy"]
     module.__all__.append(func_name)
@@ -98,8 +92,7 @@ def _implement_by_argname(func_name, unit_arguments, wrap_output=True):
         valid_unit_arguments = [
             label
             for label in unit_arguments
-            if label in bound_args.arguments
-            and bound_args.arguments[label] is not None
+            if label in bound_args.arguments and bound_args.arguments[label] is not None
         ]
 
         # Unwrap valid unit arguments, ensure consistency, and obtain output wrapper
@@ -137,9 +130,7 @@ def implement_numpy_functions():
         func_name,
         out_unit,
     ) in numpy_func.matching_input_set_units_output_ufuncs.items():
-        _implement_func(
-            func_name, input_units="all_consistent", output_unit=out_unit
-        )
+        _implement_func(func_name, input_units="all_consistent", output_unit=out_unit)
 
     for func_name, (in_unit, out_unit) in numpy_func.set_units_ufuncs.items():
         _implement_func(func_name, input_units=in_unit, output_unit=out_unit)
@@ -155,7 +146,7 @@ def implement_numpy_functions():
     for func_name, unit_op in numpy_func.op_units_output_ufuncs.items():
         _implement_func(func_name, output_unit=unit_op)
 
-    for func_name in ["cumprod", "cumproduct", "nancumprod"]:
+    for func_name in ["cumprod", "nancumprod"]:
         _implement_func(func_name, input_units="", output_unit="")
 
     for func_name in ["block", "hstack", "vstack", "dstack", "column_stack"]:
