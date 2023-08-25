@@ -1,29 +1,72 @@
-__all__ = ["UnitRegistry"]
+from typing import Any, Generic, TypeAlias
 
-from typing import Any
-
-import jax
 from jax.tree_util import register_pytree_node
-from pint import UnitRegistry as PintUnitRegistry, compat
+from pint import facets
+from pint.facets.plain import GenericPlainRegistry, PlainUnit, QuantityT, UnitT
+
+from jpu.quantity import JpuQuantity
 
 
-class UnitRegistry(PintUnitRegistry):
-    def __init__(self, *args: Any, **kwargs: Any):
+class GenericJpuRegistry(
+    Generic[QuantityT, UnitT], GenericPlainRegistry[QuantityT, UnitT]
+):
+    pass
+
+
+class JpuRegistry(GenericPlainRegistry[JpuQuantity[Any], PlainUnit]):
+    Quantity: TypeAlias = JpuQuantity[Any]  # type: ignore
+    Unit: TypeAlias = PlainUnit
+
+
+class GenericUnitRegistry(  # type: ignore
+    Generic[facets.QuantityT, facets.UnitT],
+    facets.GenericSystemRegistry[facets.QuantityT, facets.UnitT],
+    facets.GenericContextRegistry[facets.QuantityT, facets.UnitT],
+    GenericJpuRegistry[facets.QuantityT, facets.UnitT],
+    facets.GenericMeasurementRegistry[facets.QuantityT, facets.UnitT],
+    facets.GenericFormattingRegistry[facets.QuantityT, facets.UnitT],
+    facets.GenericNonMultiplicativeRegistry[facets.QuantityT, facets.UnitT],
+    facets.GenericPlainRegistry[facets.QuantityT, facets.UnitT],
+):
+    pass
+
+
+class Quantity(
+    facets.SystemRegistry.Quantity,
+    facets.ContextRegistry.Quantity,
+    JpuRegistry.Quantity,
+    facets.MeasurementRegistry.Quantity,
+    facets.FormattingRegistry.Quantity,
+    facets.NonMultiplicativeRegistry.Quantity,
+    facets.PlainRegistry.Quantity,
+):
+    pass
+
+
+class Unit(
+    facets.SystemRegistry.Unit,
+    facets.ContextRegistry.Unit,
+    facets.MeasurementRegistry.Unit,
+    facets.FormattingRegistry.Unit,
+    facets.NonMultiplicativeRegistry.Unit,
+    facets.PlainRegistry.Unit,
+):
+    pass
+
+
+class UnitRegistry(GenericUnitRegistry[Quantity, Unit]):
+    Quantity: TypeAlias = Quantity  # type: ignore
+    Unit: TypeAlias = Unit
+
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Register the Quantity produced by this registry with JAX
-        def flatten_quantity(q: Any) -> tuple[tuple[Any], Any]:
-            return (q.magnitude,), q.units
+        def flatten_quantity(q):
+            return (q.magnitude,), (q.units, q._REGISTRY)
 
-        def unflatten_quantity(aux_data: Any, children: tuple[Any]) -> Any:
-            return self.Quantity(children[0], aux_data)
+        def unflatten_quantity(aux_data, children):
+            (magnitude,) = children
+            units, registry = aux_data
+            return registry.Quantity(magnitude, units)
 
         register_pytree_node(self.Quantity, flatten_quantity, unflatten_quantity)
-
-
-def is_duck_array_type(cls: Any) -> bool:
-    return issubclass(cls, jax.core.Tracer) or _is_duck_array_type(cls)
-
-
-_is_duck_array_type = compat.is_duck_array_type
-compat.is_duck_array_type = is_duck_array_type

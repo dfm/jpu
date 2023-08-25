@@ -5,6 +5,7 @@ import jax.numpy as jnp
 import numpy as np
 import pint
 import pytest
+from jax._src.public_test_util import check_close
 
 import jpu.numpy as jun
 from jpu import UnitRegistry
@@ -18,10 +19,10 @@ def assert_quantity_allclose(a, b):
     if is_quantity(a):
         assert is_quantity(b)
         assert str(a.units) == str(b.units)
-        np.testing.assert_allclose(a.magnitude, b.magnitude)
+        check_close(a.magnitude, b.magnitude)
     else:
         assert not is_quantity(b)
-        np.testing.assert_allclose(a, b)
+        check_close(a, b)
 
 
 def test_type_wrapping():
@@ -29,7 +30,7 @@ def test_type_wrapping():
     x = jnp.array([1.4, 2.0, -5.9])
     q = x * u.kpc
     assert q.units == u.kpc
-    np.testing.assert_allclose(q.magnitude, x)
+    check_close(q.magnitude, x)
     assert type(q.magnitude) == type(x)
 
 
@@ -41,31 +42,31 @@ def test_array_ops():
     # Addition
     res = q + np.array(0.01) * u.Mpc
     assert res.units == u.kpc
-    np.testing.assert_allclose(res.magnitude, x + 10)
+    check_close(res.magnitude, x + 10)
     assert type(res.magnitude) == type(x)
 
     # Different order
     res = np.array(0.01) * u.Mpc + q
     assert res.units == u.Mpc
-    np.testing.assert_allclose(res.magnitude, 1e-3 * (x + 10))
+    check_close(res.magnitude, 1e-3 * (x + 10))
     assert type(res.magnitude) == type(x)
 
     # Subtraction
     res = q - np.array(0.01) * u.Mpc
     assert res.units == u.kpc
-    np.testing.assert_allclose(res.magnitude, x - 10)
+    check_close(res.magnitude, x - 10)
     assert type(res.magnitude) == type(x)
 
     # Multiplication
     res = 2 * q
     assert res.units == u.kpc
-    np.testing.assert_allclose(res.magnitude, 2 * x)
+    check_close(res.magnitude, 2 * x)
     assert type(res.magnitude) == type(x)
 
     # Division
     res = q / (2 * u.kpc)
     assert res.units == u.dimensionless
-    np.testing.assert_allclose(res.magnitude, 0.5 * x)
+    check_close(res.magnitude, 0.5 * x)
     assert type(res.magnitude) == type(x)
 
 
@@ -113,4 +114,4 @@ def test_unary(func, in_unit):
 
     np_res_no_units = np_func(*(x.magnitude for x in np_args))
     jun_res_no_units = jun_func(*(x.magnitude for x in jun_args))
-    np.testing.assert_allclose(jun_res_no_units, np_res_no_units)
+    check_close(jun_res_no_units, np_res_no_units)

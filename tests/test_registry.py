@@ -2,7 +2,7 @@
 
 import jax
 import jax.numpy as jnp
-import numpy as np
+from jax._src.public_test_util import check_close
 
 from jpu.registry import UnitRegistry
 
@@ -14,7 +14,7 @@ def test_tree_flatten():
 
     val, _ = jax.tree_util.tree_flatten(q)
     assert len(val) == 1
-    np.testing.assert_allclose(val[0], x)
+    check_close(val[0], x)
 
 
 def test_jittable():
@@ -29,7 +29,7 @@ def test_jittable():
 
     res = func(q)
     assert res.units == u.m
-    np.testing.assert_allclose(res.magnitude, x + 4500.0)
+    check_close(res.magnitude, x + 4500.0)
 
 
 def test_ducktype():
@@ -39,7 +39,7 @@ def test_ducktype():
 
     res = q.sum()
     assert res.units == u.m
-    np.testing.assert_allclose(res.magnitude, x.sum())
+    check_close(res.magnitude, x.sum())
 
     @jax.jit
     def func(q):
@@ -49,7 +49,7 @@ def test_ducktype():
     res = func(q)
     print(type(q), type(res))
     assert res.units == u.m
-    np.testing.assert_allclose(res.magnitude, x.sum())
+    check_close(res.magnitude, x.sum())
 
 
 def test_unary_ops():
@@ -64,6 +64,6 @@ def test_unary_ops():
         lambda q: 2 * q,
     ]:
         res = func(q)
-        np.testing.assert_allclose(res.magnitude, func(x))
+        check_close(res.magnitude, func(x))
         res = jax.jit(func)(q)
-        np.testing.assert_allclose(res.magnitude, func(x))
+        check_close(res.magnitude, func(x))
