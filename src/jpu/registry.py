@@ -1,7 +1,8 @@
-from typing import Any, Generic, TypeAlias
+from typing import Any, Generic
 
 from jax.tree_util import register_pytree_node
 from pint import facets
+from pint.compat import TypeAlias
 from pint.facets.plain import GenericPlainRegistry, PlainUnit, QuantityT, UnitT
 
 from jpu.quantity import JpuQuantity
