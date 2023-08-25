@@ -33,7 +33,7 @@ source = "vcs"
 version-file = "src/jpu/jpu_version.py"
 
 [tool.black]
-target-version = ["py38", "py39"]
+target-version = ["py39"]
 line-length = 88
 
 [tool.ruff]
