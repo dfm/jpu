@@ -30,7 +30,7 @@ build-backend = "hatchling.build"
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/jpu/version.py"
+version-file = "src/jpu/jpu_version.py"
 
 [tool.black]
 target-version = ["py38", "py39"]

@@ -23,6 +23,7 @@ class GenericUnitRegistry(  # type: ignore
     facets.GenericSystemRegistry[facets.QuantityT, facets.UnitT],
     facets.GenericContextRegistry[facets.QuantityT, facets.UnitT],
     GenericJpuRegistry[facets.QuantityT, facets.UnitT],
+    facets.GenericNumpyRegistry[facets.QuantityT, facets.UnitT],
     facets.GenericMeasurementRegistry[facets.QuantityT, facets.UnitT],
     facets.GenericFormattingRegistry[facets.QuantityT, facets.UnitT],
     facets.GenericNonMultiplicativeRegistry[facets.QuantityT, facets.UnitT],
@@ -35,6 +36,7 @@ class Quantity(
     facets.SystemRegistry.Quantity,
     facets.ContextRegistry.Quantity,
     JpuRegistry.Quantity,
+    facets.NumpyRegistry.Quantity,
     facets.MeasurementRegistry.Quantity,
     facets.FormattingRegistry.Quantity,
     facets.NonMultiplicativeRegistry.Quantity,
@@ -46,6 +48,7 @@ class Quantity(
 class Unit(
     facets.SystemRegistry.Unit,
     facets.ContextRegistry.Unit,
+    facets.NumpyRegistry.Unit,
     facets.MeasurementRegistry.Unit,
     facets.FormattingRegistry.Unit,
     facets.NonMultiplicativeRegistry.Unit,

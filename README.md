@@ -3,7 +3,7 @@
 **Built with [JAX](https://jax.readthedocs.io) and
 [Pint](https://pint.readthedocs.io)!**
 
-This module provides and interface between [JAX](https://jax.readthedocs.io) and
+This module provides an interface between [JAX](https://jax.readthedocs.io) and
 [Pint](https://pint.readthedocs.io) to allow JAX to support operations with
 units. The propagation of units happens at trace time, so jitted functions
 should see no runtime cost. This library is experimental so expect some sharp
@@ -61,8 +61,6 @@ Here is a slightly more complete example:
 >>> x, y = projectile_motion(
 ...     5.0 * u.km / u.h, 60 * u.deg, np.linspace(0, 1, 50) * u.s
 ... )
->>> x[:3]
-<Quantity([0.         0.01417234 0.02834467], 'meter')>
 
 ```
 

@@ -31,7 +31,6 @@ def _get_namespace_functions(module):
             attr = getattr(module, key)
         except Exception:
             continue
-        print(type(attr))
         if isinstance(
             attr,
             (
