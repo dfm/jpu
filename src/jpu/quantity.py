@@ -2,6 +2,7 @@ import warnings
 from functools import partial
 from typing import Generic
 
+import jax.numpy as jnp
 from pint.facets.plain import MagnitudeT, PlainQuantity
 
 from jpu import numpy as jpu_numpy
@@ -62,6 +63,18 @@ class JpuQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
             stacklevel=2,
         )
         return self._magnitude.__array__(*args, **kwargs)
+
+    @property
+    def dtype(self):
+        return jnp.asarray(self._magnitude).dtype
+
+    @property
+    def ndim(self):
+        return jnp.ndim(self._magnitude)
+
+    @property
+    def shape(self):
+        return jnp.shape(self._magnitude)
 
     def __len__(self):
         return len(self._magnitude)
