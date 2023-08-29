@@ -64,7 +64,7 @@ class JpuQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
             "The unit of a Quantity is stripped when downcasted to an array.",
             stacklevel=2,
         )
-        return self._magnitude.__array__(*args, **kwargs)
+        return self._magnitude.__array__(*args, **kwargs)  # type: ignore
 
     @property
     def dtype(self):
@@ -72,15 +72,15 @@ class JpuQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
 
     @property
     def ndim(self):
-        return jnp.ndim(self._magnitude)
+        return jnp.ndim(self._magnitude)  # type: ignore
 
     @property
     def shape(self):
-        return jnp.shape(self._magnitude)
+        return jnp.shape(self._magnitude)  # type: ignore
 
     def _maybe_dimensionless(self, other):
         if isinstance(other, jax.Array):
-            return self._REGISTRY.Quantity(other, self._REGISTRY.dimensionless)
+            return self._REGISTRY.Quantity(other, "dimensionless")
         return other
 
     def __iadd__(self, other):
@@ -101,7 +101,7 @@ class JpuQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
         return -self._add_sub(self._maybe_dimensionless(other), operator.sub)
 
     def __len__(self):
-        return len(self._magnitude)
+        return len(self._magnitude)  # type: ignore
 
     def _wrap_passthrough_method(self, name, *args, **kwargs):
         return self.__class__(
@@ -109,7 +109,7 @@ class JpuQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
         )
 
     def __getitem__(self, key):
-        return self.__class__(self._magnitude[key], self._units)
+        return self.__class__(self._magnitude[key], self._units)  # type: ignore
 
     def __getattr__(self, item):
         if item in SUPPORTED_NUMPY_METHODS:

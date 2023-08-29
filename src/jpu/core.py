@@ -1,5 +1,3 @@
-__all__ = ["is_quantity", "grad", "value_and_grad"]
-
 import jax
 from jax._src.util import wraps
 from jax.tree_util import tree_map
@@ -68,6 +66,7 @@ def value_and_grad(
             result, aux = fun(*args, **kwargs)
         else:
             result = fun(*args, **kwargs)
+            aux = None
         if is_quantity(result):
             magnitude = result.magnitude
             units = result.units

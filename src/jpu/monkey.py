@@ -1,5 +1,3 @@
-__all__ = ["patch"]
-
 import types
 from functools import singledispatch
 

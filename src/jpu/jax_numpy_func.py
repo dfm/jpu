@@ -13,6 +13,7 @@ from inspect import signature
 from itertools import chain
 
 import jax.numpy as jnp
+from pint import DimensionalityError
 from pint.facets.numpy import numpy_func
 
 from jpu import numpy as jpu_numpy
@@ -65,7 +66,7 @@ def implements(numpy_func_string):
 
 def implement_func(func_str, input_units=None, output_unit=None):
     func_str_split = func_str.split(".")
-    func = getattr(jnp, func_str_split[0], None)
+    func = getattr(jnp, func_str_split[0])
     for func_str_piece in func_str_split[1:]:
         func = getattr(func, func_str_piece)
 
@@ -289,13 +290,13 @@ def _power(x1, x2):
 @implements("add")
 def _add(x1, x2, *args, **kwargs):
     (x1, x2), output_wrap = numpy_func.unwrap_and_wrap_consistent_units(x1, x2)
-    return output_wrap(jnp.add(x1, x2, *args, **kwargs))
+    return output_wrap(jnp.add(x1, x2, *args, **kwargs))  # type: ignore
 
 
 @implements("subtract")
 def _subtract(x1, x2, *args, **kwargs):
     (x1, x2), output_wrap = numpy_func.unwrap_and_wrap_consistent_units(x1, x2)
-    return output_wrap(jnp.subtract(x1, x2, *args, **kwargs))
+    return output_wrap(jnp.subtract(x1, x2, *args, **kwargs))  # type: ignore
 
 
 @implements("meshgrid")
@@ -322,19 +323,20 @@ def _interp(x, xp, fp, left=None, right=None, period=None):
     (fp, right, left), output_wrap = numpy_func.unwrap_and_wrap_consistent_units(
         fp, left, right
     )
-    return output_wrap(jnp.interp(x, xp, fp, left=left, right=right, period=period))
+    res = jnp.interp(x, xp, fp, left=left, right=right, period=period)  # type: ignore
+    return output_wrap(res)
 
 
 @implements("concatenate")
 def _concatenate(sequence, *args, **kwargs):
     sequence, output_wrap = numpy_func.unwrap_and_wrap_consistent_units(*sequence)
-    return output_wrap(jnp.concatenate(sequence, *args, **kwargs))
+    return output_wrap(jnp.concatenate(sequence, *args, **kwargs))  # type: ignore
 
 
 @implements("stack")
 def _stack(arrays, *args, **kwargs):
     arrays, output_wrap = numpy_func.unwrap_and_wrap_consistent_units(*arrays)
-    return output_wrap(jnp.stack(arrays, *args, **kwargs))
+    return output_wrap(jnp.stack(arrays, *args, **kwargs))  # type: ignore
 
 
 @implements("unwrap")
@@ -354,7 +356,14 @@ def _einsum(subscripts, *operands, **kwargs):
     output_unit = numpy_func.get_op_output_unit(
         "mul", numpy_func._get_first_input_units(operands), operands
     )
-    return jnp.einsum(subscripts, *operand_magnitudes, **kwargs) * output_unit
+    return (
+        jnp.einsum(
+            subscripts,
+            *operand_magnitudes,  # type: ignore
+            **kwargs,
+        )
+        * output_unit
+    )
 
 
 @implements("isin")
@@ -367,7 +376,7 @@ def _isin(element, test_elements, assume_unique=False, invert=False):
     if numpy_func._is_quantity(test_elements):
         try:
             test_elements = test_elements.m_as(element.units)
-        except numpy_func.DimensionalityError:
+        except DimensionalityError:
             # Incompatible unit test elements cannot be in element
             return jnp.full(element.shape, False)
     elif not element.dimensionless:
@@ -419,7 +428,7 @@ def _require_multiplicative(func):
 def _where(condition, *args):
     condition = getattr(condition, "magnitude", condition)
     args, output_wrap = numpy_func.unwrap_and_wrap_consistent_units(*args)
-    return output_wrap(jnp.where(condition, *args))
+    return output_wrap(jnp.where(condition, *args))  # type: ignore
 
 
 @implements("any")
@@ -459,7 +468,7 @@ def implement_prod_func(name):
             )
             units = a.units**exponent
 
-        result = func(a._magnitude, *args, **kwargs)
+        result = func(a._magnitude, *args, **kwargs)  # type: ignore
 
         return registry.Quantity(result, units)
 
@@ -520,7 +529,7 @@ def implement_consistent_units_by_argument(func_str, unit_arguments, wrap_output
 
     @implements(func_str)
     def implementation(*args, **kwargs):
-        bound_args = signature(func).bind(*args, **kwargs)
+        bound_args = signature(func).bind(*args, **kwargs)  # type: ignore
         valid_unit_arguments = [
             label
             for label in unit_arguments
@@ -531,7 +540,7 @@ def implement_consistent_units_by_argument(func_str, unit_arguments, wrap_output
         )
         for i, unwrapped_unit_arg in enumerate(unwrapped_unit_args):
             bound_args.arguments[valid_unit_arguments[i]] = unwrapped_unit_arg
-        ret = func(*bound_args.args, **bound_args.kwargs)
+        ret = func(*bound_args.args, **bound_args.kwargs)  # type: ignore
 
         if wrap_output:
             return output_wrap(ret)
@@ -676,4 +685,4 @@ def _argpartition(a, *args, **kwargs):
 @implements("choose")
 def _choose(a, *args, **kwargs):
     (a,), output_wrap = numpy_func.unwrap_and_wrap_consistent_units(a)
-    return output_wrap(jnp.choose(a, *args, **kwargs))
+    return output_wrap(jnp.choose(a, *args, **kwargs))  # type: ignore

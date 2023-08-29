@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+# type: ignore
 
 
 def test_readme():
