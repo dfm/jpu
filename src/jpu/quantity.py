@@ -1,7 +1,9 @@
+import operator
 import warnings
 from functools import partial
 from typing import Generic
 
+import jax
 import jax.numpy as jnp
 from pint.facets.plain import MagnitudeT, PlainQuantity
 
@@ -75,6 +77,28 @@ class JpuQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
     @property
     def shape(self):
         return jnp.shape(self._magnitude)
+
+    def _maybe_dimensionless(self, other):
+        if isinstance(other, jax.Array):
+            return self._REGISTRY.Quantity(other, self._REGISTRY.dimensionless)
+        return other
+
+    def __iadd__(self, other):
+        return self._add_sub(self._maybe_dimensionless(other), operator.add)
+
+    def __add__(self, other):
+        return self._add_sub(self._maybe_dimensionless(other), operator.add)
+
+    __radd__ = __add__
+
+    def __isub__(self, other):
+        return self._add_sub(self._maybe_dimensionless(other), operator.sub)
+
+    def __sub__(self, other):
+        return self._add_sub(self._maybe_dimensionless(other), operator.sub)
+
+    def __rsub__(self, other):
+        return -self._add_sub(self._maybe_dimensionless(other), operator.sub)
 
     def __len__(self):
         return len(self._magnitude)

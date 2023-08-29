@@ -1,5 +1,7 @@
 # mypy: ignore-errors
 
+import operator
+
 import jax
 import jax.numpy as jnp
 import numpy as np
@@ -115,3 +117,16 @@ def test_unary(func, in_unit):
     np_res_no_units = np_func(*(x.magnitude for x in np_args))
     jun_res_no_units = jun_func(*(x.magnitude for x in jun_args))
     check_close(jun_res_no_units, np_res_no_units)
+
+
+@pytest.mark.parametrize(
+    "op", [operator.add, operator.sub, operator.mul, operator.truediv]
+)
+def test_duck_type(op):
+    u = UnitRegistry()
+
+    @jax.jit
+    def func(x):
+        return op(jnp.array(5.0), x)
+
+    check_close(func(10.0 * u.dimensionless).magnitude, op(5.0, 10.0))
