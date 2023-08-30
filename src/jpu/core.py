@@ -96,7 +96,7 @@ def value_and_grad(
         if result_units is None:
             result = result_wo_units
             grad = tree_map(
-                lambda g: (g.magnitude / g.units if is_quantity(g) else g),
+                lambda g: (g.magnitude * (1 / g.units) if is_quantity(g) else g),
                 grad,
                 is_leaf=is_quantity,
             )
