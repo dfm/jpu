@@ -12,6 +12,7 @@ def tests(session, x64):
         env = {"JAX_ENABLE_X64": "1"}
     else:
         env = {}
+    env["PYTHONWARNINGS"] = "error::DeprecationWarning"
     session.run("pytest", *args, env=env)
 
 

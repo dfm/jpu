@@ -477,26 +477,6 @@ for name in ("prod", "nanprod"):
     implement_prod_func(name)
 
 
-@implements("trapz")
-def _trapz(a, x=None, dx=1.0, **kwargs):
-    a = numpy_func._base_unit_if_needed(a)
-    units = a.units
-    if x is not None:
-        if hasattr(x, "units"):
-            x = numpy_func._base_unit_if_needed(x)
-            units *= x.units
-            x = x._magnitude
-        ret = jnp.trapz(a._magnitude, x, **kwargs)
-    else:
-        if hasattr(dx, "units"):
-            dx = numpy_func._base_unit_if_needed(dx)
-            units *= dx.units
-            dx = dx._magnitude
-        ret = jnp.trapz(a._magnitude, dx=dx, **kwargs)
-
-    return a.units._REGISTRY.Quantity(ret, units)
-
-
 def implement_mul_func(func):
     func = getattr(jnp, func_str)
 
