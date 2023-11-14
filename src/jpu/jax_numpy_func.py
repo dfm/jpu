@@ -493,7 +493,7 @@ def implement_mul_func(func):
         return a.units._REGISTRY.Quantity(mag, units)
 
 
-for func_str in ("cross", "dot"):
+for func_str in ("cross", "dot", "outer"):
     implement_mul_func(func_str)
 
 
