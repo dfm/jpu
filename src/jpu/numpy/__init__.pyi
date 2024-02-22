@@ -6,8 +6,8 @@ from typing import Any, Callable, Literal, TypeVar, overload
 import numpy as _np
 from jax._src.lax.lax import PrecisionLike
 from jax._src.typing import (
-    Array as JAXArray,
-    ArrayLike as JAXArrayLike,
+    # Array as JAXArray,
+    # ArrayLike as JAXArrayLike,
     DimSize,
     DType,
     DTypeLike,
@@ -17,8 +17,8 @@ from jax._src.typing import (
 
 from jpu.registry import Quantity
 
-ArrayLike = JAXArrayLike | Quantity
-Array = JAXArray | Quantity
+ArrayLike = Quantity
+Array = Quantity
 
 _T = TypeVar("_T")
 _Axis = None | int | Sequence[int]
