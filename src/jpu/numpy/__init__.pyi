@@ -5,15 +5,7 @@ from typing import Any, Callable, Literal, TypeVar, overload
 
 import numpy as _np
 from jax._src.lax.lax import PrecisionLike
-from jax._src.typing import (
-    # Array as JAXArray,
-    # ArrayLike as JAXArrayLike,
-    DimSize,
-    DType,
-    DTypeLike,
-    DuckTypedArray,
-    Shape,
-)
+from jax._src.typing import DimSize, DType, DTypeLike, DuckTypedArray, Shape
 
 from jpu.registry import Quantity
 
