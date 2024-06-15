@@ -18,5 +18,6 @@ def tests(session, x64):
 
 @nox.session
 def doctest(session):
+    session.install("jaxlib")
     session.install(".")
     session.run("python", "-m", "doctest", "-v", "README.md")
