@@ -20,7 +20,7 @@ dependencies = ["jax", "pint"]
 "Bug Tracker" = "https://github.com/dfm/jpu/issues"
 
 [project.optional-dependencies]
-test = ["pytest"]
+test = ["pytest", "jaxlib"]
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
