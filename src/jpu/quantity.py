@@ -1,11 +1,10 @@
 import operator
 import warnings
 from functools import partial
-from typing import Generic
 
 import jax
 import jax.numpy as jnp
-from pint.facets.plain import MagnitudeT, PlainQuantity
+import pint
 
 from jpu import numpy as jpu_numpy
 
@@ -58,7 +57,7 @@ SUPPORTED_PASSTHROUGH_METHODS = [
 ]
 
 
-class JpuQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
+class JpuQuantity(pint.UnitRegistry.Quantity):
     def __array__(self, *args, **kwargs):
         warnings.warn(
             "The unit of a Quantity is stripped when downcasted to an array.",
