@@ -538,7 +538,7 @@ for func_str, unit_arguments, wrap_output in (
     ("ptp", "a", True),
     ("ravel", "a", True),
     ("repeat", "a", True),
-    ("round_", "a", True),
+    # ("round_", "a", True),
     ("round", "a", True),
     ("take", "a", True),
     ("sort", "a", True),
